@@ -1,10 +1,23 @@
-//
-//  main.c
-//  Everpresent Lambda simulations
-//
-//  Created by Michel Buck on 25/07/2014.
-//  Copyright (c) 2014 First year. All rights reserved.
-//
+/*************************************************************************
+ *  Generates an N-step simulation of fluctuating lambda
+ *
+ *  Created by Michel Buck on 25/07/2014
+ *  Copyright (c) 2014 First year. All rights reserved.
+ *
+ *
+ *  Compilation:      g++ main.cpp -o main.o
+ *
+ *  Execution:        ./main.o [Number of Steps]
+ *                    Example : 
+ *                    ./main.o 1000
+ *
+ *  Dependencies:     None
+ *
+ *  Third party:      mersenne.cpp
+ *
+ *  User parameters:  N    - number of steps in the simulation
+ *
+ *************************************************************************/
 
 #include <stdio.h>
 #include <cstdlib>
@@ -14,12 +27,11 @@
 #include <math.h>
 #include <ctime>
 #include "../lib/mersenne.cpp"
-//#include "../include/Tools.h"
 
 // SI UNITS AND CONSTANTS
 const double PI = M_PI;
-double HBAR = 1.05457173e-34; // m^2 * kg / s
-double CLIGHT = 299792458.0;    // m / s
+double HBAR    = 1.05457173e-34; // m^2 * kg / s
+double CLIGHT  = 299792458.0;    // m / s
 double GNEWTON = 6.67384e-11;    // m^3 / kg / s^2
 //double LPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 3.0), 0.5);
 double LPLANCK = 1.0;
