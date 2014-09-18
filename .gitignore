@@ -1,1 +1,3 @@
 *.o
+*.out
+src/lambda.txt
