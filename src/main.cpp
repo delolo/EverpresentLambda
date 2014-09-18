@@ -28,6 +28,8 @@
 #include <ctime>
 #include "../lib/mersenne.cpp"
 
+// THIS IS A RANDOM ORANGE
+
 // SI UNITS AND CONSTANTS
 const double PI = M_PI;
 double HBAR    = 1.05457173e-34; // m^2 * kg / s
