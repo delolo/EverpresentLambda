@@ -32,9 +32,10 @@
 
 // SI UNITS AND CONSTANTS
 const double PI = M_PI;
-double HBAR    = 1.05457173e-34; // m^2 * kg / s
+double HBAR    = 1.05457173E-34; // m^2 * kg / s
 double CLIGHT  = 299792458.0;    // m / s
-double GNEWTON = 6.67384e-11;    // m^3 / kg / s^2
+double GNEWTON = 6.67384E-11;    // m^3 / kg / s^2
+double AGEOFUNIVERSE = 4.3E17;   // s
 //double LPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 3.0), 0.5);
 double LPLANCK = 1.0;
 //double TPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 5.0), 0.5);
@@ -77,9 +78,7 @@ private:
 public:
     // Class constructor
     Simulator(int steps) {
-        this->steps = steps;
-        printf("%d\n", steps);
-        this->initialize();
+        this->initialize(steps);
     }
 
     // Class destructor
@@ -146,12 +145,17 @@ public:
     }
 
 private:
-    void initialize() {
+    void initialize(int steps) {
+        // Set number of steps
+        this->steps = steps;
+
         // Set free paremeter ell
         ell = 3.0 * LPLANCK;
 
         // Set initial values
-        deltatau = 10 * TPLANCK;
+        //deltatau = (AGEOFUNIVERSE / TPLANCK) / steps;
+        this->deltatau = 10.0 * TPLANCK;
+        printf("delta-tau = %E\n", deltatau);
         tau0 = TPLANCK;
         a0 = 1.0;
         V0 = 0.0;
