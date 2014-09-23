@@ -83,15 +83,15 @@ public:
 
     // Class destructor
     ~Simulator() {
-        free(a);
-        free(N);
-        free(V);
-        free(S);
-        free(rhomat);
-        free(rhorad);
-        free(lambda);
-        free(tau);
-        free(debug);
+        delete a;
+        delete N;
+        delete V;
+        delete S;
+        delete rhomat;
+        delete rhorad;
+        delete lambda;
+        delete tau;
+        delete debug;
     }
 
 public:
@@ -164,16 +164,16 @@ private:
         lambda0 = 0.0;
 
         // Allocate memory
-        a =      (double*) malloc(steps * sizeof(double));
-        N =      (double*) malloc(steps * sizeof(double));
-        V =      (double*) malloc(steps * sizeof(double));
-        y =      (double*) malloc(steps * sizeof(double));
-        S =      (double*) malloc(steps * sizeof(double));
-        rhomat = (double*) malloc(steps * sizeof(double));
-        rhorad = (double*) malloc(steps * sizeof(double));
-        lambda = (double*) malloc(steps * sizeof(double));
-        tau =    (double*) malloc(steps * sizeof(double));
-        debug =  (double*) malloc(steps * sizeof(double));
+        a =      new double[steps];
+        N =      new double[steps];
+        V =      new double[steps];
+        y =      new double[steps];
+        S =      new double[steps];
+        rhomat = new double[steps];
+        rhorad = new double[steps];
+        lambda = new double[steps];
+        tau =    new double[steps];
+        debug =  new double[steps];
 
         // Initialise vectors
         a[0] = a0;
