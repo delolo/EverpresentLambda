@@ -20,7 +20,7 @@
  *************************************************************************/
 
 #include <stdio.h>
-#include <cstdlib>
+//#include <cstdlib>
 #include <stdlib.h>
 #include <string.h>
 #include <cmath>
@@ -206,7 +206,7 @@ private:
 };
 
 int main(int argc, const char * argv[]) {
-    int steps = std::atoi(argv[1]);
+    int steps = atoi(argv[1]);
     printf("Running simulation for %d steps:\n", steps);
     Simulator* simulator = new Simulator(steps);
     simulator->runSimulation();
