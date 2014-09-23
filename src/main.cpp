@@ -26,7 +26,7 @@
 #include <cmath>
 #include <math.h>
 #include <ctime>
-#include "../lib/mersenne.cpp"
+#include "../include/tools/random.h"
 
 // THIS IS A RANDOM ORANGE
 
@@ -46,7 +46,7 @@ class Simulator {
 
 private:
     // RNG
-    CRandomMersenne *RanGen;
+    //CRandomMersenne *RanGen;
 
     // number of steps
     int steps;
@@ -100,6 +100,7 @@ public:
             doStep(i);
             printf("%d:\t tau = %E\t a = %E\t rhorad = %E\t rhomat = %E\t lambda = %E\n", i, tau[i], a[i], rhorad[i], rhomat[i], lambda[i]);
         }
+        this->getLuminosityDistances();
     }
 
     void doStep(int i) {
@@ -191,18 +192,16 @@ private:
         debug[0] = 0.0;
 
         // Seed RNG
-        RanGen = new CRandomMersenne((int) time(0));
+        InitRandom();
+    }
+
+    double* getLuminosityDistances() {
+        double* out = new double[steps];
+        for(int i = 0; i < steps; i++) {
+            out[i] = a[steps - 1] * y[i] / a[i];
+        }
+        return out;
     } 
-
-    double rnd() {
-        return RanGen->Random();
-    }
-
-    double rndGaussian() {
-        double phi = 2 * M_PI * rnd();
-        double R = sqrt(2 * log(1 / (1 - rnd())));
-        return cos(phi) * R;
-    }
 };
 
 int main(int argc, const char * argv[]) {

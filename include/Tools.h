@@ -1,60 +1,28 @@
-#pragma once
+#ifndef TOOLS_H
+#define TOOLS_H
 
-//#include <sys/_types/_time_t.h>
-#include <cmath>
-#include <ctime>
-#include <new>
-#include <sstream>
-#include <string>
-#include <iomanip>
 #include <vector>
+#include <string>
 
-#include "../lib/mersenne.cpp"
+// Current Time Seeder
+void InitRandom();
 
-using namespace std;
+// Integer Seeder
+void InitRandom(int seed);
 
-const double PI = M_PI;
+// Return a uniform double in (0,1)
+double rnd();
 
-CRandomMersenne *RanGen;
+// Get random gaussian with mean mu and s.d. sigma
+double rndGaussian(double mu, double sigma);
 
-void InitRandom() {
-    RanGen = new CRandomMersenne((int) time(0));
-}
+// Square a number
+double sqr(double x);
 
-void InitRandom(int seed) {
-    RanGen = new CRandomMersenne((int) seed);
-}
+// Find minimum of two integers
+double min(double a, double b);
 
-double rnd() {
-    return RanGen->Random();
-}
-// get random gaussian with mean mu and s.d. sigma
-double rndGaussian(double mu, double sigma) {
-    double phi = 2 * M_PI * rnd();
-    double R = sqrt(2 * log(1 / (1 - rnd()))) * sigma;
-    return mu + cos(phi) * R;
-}
+// Convert Vector to String
+template<typename T> std::string vecToString(const std::vector<T> &vec);
 
-double sqr(double x) {
-    return x * x;
-}
-
-double min(double a, double b) {
-    if (a < b)
-    return a;
-    return b;
-}
-;
-
-template<typename T> string vecToString(const std::vector<T> &vec) {
-    ostringstream stream;
-    stream << "(" << vec[0];
-    for (int i = 1; i < vec.size(); i++) {
-        stream << ", " << vec[i];
-    }
-    stream << ")";
-    return stream.str();
-}
-;
-
-
+#endif
