@@ -1,3 +1,4 @@
 *.o
 *.out
 src/*.txt
+*.DS_Store
