@@ -33,8 +33,11 @@
 // SI UNITS AND CONSTANTS
 const double PI = M_PI;
 double HBAR    = 1.05457173E-34; // m^2 * kg / s
+//double HBAR    = 1.0;
 double CLIGHT  = 299792458.0;    // m / s
+//double CLIGHT  = 1.0;
 double GNEWTON = 6.67384E-11;    // m^3 / kg / s^2
+//double GNEWTON = 1.0;
 double LPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 3.0), 0.5);
 //double LPLANCK = 1.0;
 double TPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 5.0), 0.5);
