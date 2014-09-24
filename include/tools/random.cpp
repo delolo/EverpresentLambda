@@ -22,13 +22,13 @@ double rnd() {
 }
 
 double rndGaussian(double mu, double sigma) {
-    double phi = 2 * M_PI * rnd();
+    double phi = 2 * PI * rnd();
     double R = sqrt(2 * log(1 / (1 - rnd()))) * sigma;
     return mu + cos(phi) * R;
 }
 
 double rndGaussian() {
-        double phi = 2 * M_PI * rnd();
+        double phi = 2 * PI * rnd();
         double R = sqrt(2 * log(1 / (1 - rnd())));
         return cos(phi) * R;
     }

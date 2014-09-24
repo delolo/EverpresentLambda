@@ -11,7 +11,10 @@
 INCRANDOM = -I include/tools
 INCTOOLS  = -I include 
 
-# Set default make recipe. This means that the command $ make will run $ make "main".
+# Set "all" target, which is usually used by Eclipse as default I think:
+all: main test
+
+# Set default make target. This means that the command $ make will run $ make "main".
 default: main
 
 # Here are the compile recipes:
