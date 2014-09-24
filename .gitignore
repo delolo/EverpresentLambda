@@ -2,3 +2,4 @@
 *.out
 src/*.txt
 *.DS_Store
+.cproject
