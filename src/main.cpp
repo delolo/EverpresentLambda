@@ -26,7 +26,7 @@
 #include <cmath>
 #include <math.h>
 #include <ctime>
-#include "../include/tools/random.h"
+#include "random.h"
 
 // THIS IS A RANDOM ORANGE
 
@@ -109,7 +109,7 @@ public:
         // New scale factor
         double root = (rhorad[i] + rhomat[i] + lambda[i] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0;
         printf("ROOT      = %E\n", root);
-        printf("ABS(ROOT) = %E\n", abs(root));
+        printf("ABS(ROOT) = %E\n", fabs(root));
         a[i + 1] = a[i] * (1.0 + root * (tau[i + 1] - tau[i]));
 
         // New volume (double checked)
@@ -155,10 +155,10 @@ private:
         // Set number of steps
         this->steps = steps;
 
-        // Set free paremeter ell
+        // Set free parameter ell
         double alpha = 10.0;
         ell = alpha * LPLANCK;
-        printf("==================================\nParameter ALPHA = %f\n==================================\n", alpha);
+
         // Set initial values
         //deltatau = (AGEOFUNIVERSE / TPLANCK) / steps;
         deltatau = 10.0 * TPLANCK;
