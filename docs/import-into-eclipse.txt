@@ -1,0 +1,3 @@
+In Eclipse, choose the option "File->New->Makefile Project With Existing Code" and point to the directory where the Makefile is stored.
+
+Then follow "Step 2: You are now ready to build your project." on http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.cdt.doc.user%2Fgetting_started%2Fcdt_w_import.htm

@@ -35,11 +35,13 @@ const double PI = M_PI;
 double HBAR    = 1.05457173E-34; // m^2 * kg / s
 double CLIGHT  = 299792458.0;    // m / s
 double GNEWTON = 6.67384E-11;    // m^3 / kg / s^2
+double LPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 3.0), 0.5);
+//double LPLANCK = 1.0;
+double TPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 5.0), 0.5);
+//double TPLANCK = 1.0;
+double KAPPA = 8.0 * PI * GNEWTON * pow(CLIGHT, -4.0); // TIME^2 / MASS / LENGTH
 double AGEOFUNIVERSE = 4.3E17;   // s
-//double LPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 3.0), 0.5);
-double LPLANCK = 1.0;
-//double TPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 5.0), 0.5);
-double TPLANCK = 1.0;
+double HUBBLE0 = 2.20E-18;       // 1 / s
 
 // Simulator Class
 class Simulator {
@@ -98,14 +100,17 @@ public:
     void runSimulation() {
         for (int i = 0; i < steps; i++) {
             doStep(i);
-            printf("%d:\t tau = %E\t a = %E\t rhorad = %E\t rhomat = %E\t lambda = %E\n", i, tau[i], a[i], rhorad[i], rhomat[i], lambda[i]);
+            printf("%d: tau = %E\t a = %E\trhorad = %E\trhomat = %E\tlambda = %E\tvol = %E\trho = %E\n", i, tau[i], a[i], rhorad[i], rhomat[i], lambda[i], V[i], rhomat[i] + rhorad[i] + lambda[i] / KAPPA);
         }
         this->getLuminosityDistances();
     }
 
     void doStep(int i) {
         // New scale factor
-        a[i + 1] = a[i] * (1.0 + sqrt((rhorad[i] + rhomat[i] + lambda[i]) / 3.0) * (tau[i + 1] - tau[i]));
+        double root = (rhorad[i] + rhomat[i] + lambda[i] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0;
+        printf("ROOT      = %E\n", root);
+        printf("ABS(ROOT) = %E\n", abs(root));
+        a[i + 1] = a[i] * (1.0 + root * (tau[i + 1] - tau[i]));
 
         // New volume (double checked)
         V[i + 1] = 0.0;
@@ -113,20 +118,20 @@ public:
             y[k] += (tau[i + 1] - tau[i]) / a[i];
             V[i + 1] += pow(a[k] * y[k], 3.0) * (tau[k + 1] - tau[k]);
         }
-        V[i + 1] = 4.0 * PI / 3.0 * V[i + 1];
+        V[i + 1] = pow(CLIGHT, 3.0) * 4.0 * PI / 3.0 * V[i + 1];
 
         // New Cardinality
-        N[i + 1] = V[i + 1] / pow(ell, 4.0);
+        N[i + 1] = V[i + 1] * CLIGHT / pow(ell, 4.0);
 
         // New Action
-        S[i + 1] = S[i] + rndGaussian() * sqrt(N[i + 1] - N[i]);
+        S[i + 1] = S[i] + rndGaussian() * sqrt(N[i + 1] - N[i]) * HBAR;
 
         // New lambda
-        lambda[i + 1] = S[i + 1] / V[i + 1];
+        lambda[i + 1] = KAPPA * S[i + 1] / V[i + 1];
 
         // New rho
-        rhomat[i + 1] = rhomat0 / pow(a[i + 1], 3.0);
-        rhorad[i + 1] = rhorad0 / pow(a[i + 1], 4.0);
+        rhomat[i + 1] = rhomat0 * pow(a[0] / a[i + 1], 3.0);
+        rhorad[i + 1] = rhorad0 * pow(a[0] / a[i + 1], 4.0);
     }
 
         void printToFile() {
@@ -151,17 +156,18 @@ private:
         this->steps = steps;
 
         // Set free paremeter ell
-        ell = 3.0 * LPLANCK;
-
+        double alpha = 10.0;
+        ell = alpha * LPLANCK;
+        printf("==================================\nParameter ALPHA = %f\n==================================\n", alpha);
         // Set initial values
         //deltatau = (AGEOFUNIVERSE / TPLANCK) / steps;
-        this->deltatau = 10.0 * TPLANCK;
+        deltatau = 10.0 * TPLANCK;
         printf("delta-tau = %E\n", deltatau);
         tau0 = TPLANCK;
-        a0 = 1.0;
+        a0 = 4.64E-32;
         V0 = 0.0;
-        rhomat0 = 0.5;
-        rhorad0 = 0.5;
+        rhomat0 = 2.10E84; //DIMENSIONFUL!
+        rhorad0 = 1.4E112; //DIMENSIONFUL!
         lambda0 = 0.0;
 
         // Allocate memory
@@ -179,8 +185,8 @@ private:
         // Initialise vectors
         a[0] = a0;
         lambda[0] = lambda0;
-        rhomat[0] = rhomat0 / pow(a[0], 3.0);
-        rhorad[0] = rhorad0 / pow(a[0], 4.0);
+        rhomat[0] = rhomat0;
+        rhorad[0] = rhorad0;
         tau[0] = tau0;
         V[0] = V0;
         N[0] = V0 / pow(ell, 4.0);
