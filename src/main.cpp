@@ -100,17 +100,16 @@ public:
     void runSimulation() {
         for (int i = 0; i < steps; i++) {
             doStep(i);
-            printf("%d: tau = %E\t a = %E\trhorad = %E\trhomat = %E\tlambda = %E\tvol = %E\trho = %E\n", i, tau[i], a[i], rhorad[i], rhomat[i], lambda[i], V[i], rhomat[i] + rhorad[i] + lambda[i] / KAPPA);
+            printf("%d: tau=%E a=%E rhorad=%E rhomat=%E rhoratio=%E\n", i, tau[i], a[i], rhorad[i], rhomat[i], (lambda[i] / KAPPA) / 5.36934E-10 );
         }
         this->getLuminosityDistances();
     }
 
     void doStep(int i) {
         // New scale factor
-        double root = (rhorad[i] + rhomat[i] + lambda[i] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0;
-        printf("ROOT      = %E\n", root);
-        printf("ABS(ROOT) = %E\n", fabs(root));
-        a[i + 1] = a[i] * (1.0 + root * (tau[i + 1] - tau[i]));
+        double root = (rhorad[i] + rhomat[i]) * (8.0 * PI * GNEWTON * pow(CLIGHT, -2.0)) / 3.0;
+        //double root = (rhorad[i] + rhomat[i] + lambda[i] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0;
+        a[i + 1] = a[i] * (1.0 + sqrt(root) * (tau[i + 1] - tau[i]));
 
         // New volume (double checked)
         V[i + 1] = 0.0;
@@ -118,16 +117,16 @@ public:
             y[k] += (tau[i + 1] - tau[i]) / a[i];
             V[i + 1] += pow(a[k] * y[k], 3.0) * (tau[k + 1] - tau[k]);
         }
-        V[i + 1] = pow(CLIGHT, 3.0) * 4.0 * PI / 3.0 * V[i + 1];
+        V[i + 1] = pow(CLIGHT, 4.0) * 4.0 * PI / 3.0 * V[i + 1];
 
         // New Cardinality
-        N[i + 1] = V[i + 1] * CLIGHT / pow(ell, 4.0);
+        N[i + 1] = V[i + 1] / pow(ell, 4.0);
 
         // New Action
         S[i + 1] = S[i] + rndGaussian() * sqrt(N[i + 1] - N[i]) * HBAR;
 
         // New lambda
-        lambda[i + 1] = KAPPA * S[i + 1] / V[i + 1];
+        lambda[i + 1] = CLIGHT * KAPPA * S[i + 1] / V[i + 1];
 
         // New rho
         rhomat[i + 1] = rhomat0 * pow(a[0] / a[i + 1], 3.0);
@@ -156,18 +155,19 @@ private:
         this->steps = steps;
 
         // Set free parameter ell
-        double alpha = 10.0;
+        double alpha = 0.1;
         ell = alpha * LPLANCK;
 
         // Set initial values
         //deltatau = (AGEOFUNIVERSE / TPLANCK) / steps;
-        deltatau = 10.0 * TPLANCK;
+        deltatau = 100.0;
         printf("delta-tau = %E\n", deltatau);
-        tau0 = TPLANCK;
-        a0 = 4.64E-32;
+        tau0 = 1;
+        //tau0 = TPLANCK;
+        a0 = 1.99716E-10;
         V0 = 0.0;
-        rhomat0 = 2.10E84; //DIMENSIONFUL!
-        rhorad0 = 1.4E112; //DIMENSIONFUL!
+        rhomat0 = 2.98428E19; //DIMENSIONFUL!
+        rhorad0 = 4.01871E25; //DIMENSIONFUL!
         lambda0 = 0.0;
 
         // Allocate memory
@@ -192,7 +192,7 @@ private:
         N[0] = V0 / pow(ell, 4.0);
         S[0] = 0.0;
         for (int i = 1; i < steps; i++) {
-            tau[i] = tau0 + i * deltatau;
+            tau[i] = tau0 + pow(1.5,i) * deltatau;
             y[i] = 0.0;
         }
         debug[0] = 0.0;
