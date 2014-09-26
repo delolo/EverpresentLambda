@@ -33,8 +33,11 @@
 // SI UNITS AND CONSTANTS
 const double PI = M_PI;
 double HBAR    = 1.05457173E-34; // m^2 * kg / s
+//double HBAR    = 1.0;
 double CLIGHT  = 299792458.0;    // m / s
+//double CLIGHT  = 1.0;
 double GNEWTON = 6.67384E-11;    // m^3 / kg / s^2
+//double GNEWTON = 1.0;
 double LPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 3.0), 0.5);
 //double LPLANCK = 1.0;
 double TPLANCK = pow(8.0 * PI * GNEWTON * HBAR / pow(CLIGHT, 5.0), 0.5);
@@ -76,6 +79,7 @@ private:
     double rhomat0;     // initial matter energy density
     double rhorad0;     // initial radiation energy density
     double lambda0;     // initial dark energy density
+    int ifinish;        // final step value when root becomes negative
 
 public:
     // Class constructor
@@ -100,15 +104,21 @@ public:
     void runSimulation() {
         for (int i = 0; i < steps; i++) {
             doStep(i);
-            printf("%d: tau=%E a=%E rhorad=%E rhomat=%E rhoratio=%E\n", i, tau[i], a[i], rhorad[i], rhomat[i], (lambda[i] / KAPPA) / 5.36934E-10 );
+            if((rhorad[i] + rhomat[i] + lambda[i] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0<0){
+                break;
+            }
+            //printf("%d: tau=%E a=%E rhorad=%E rhomat=%E rhoratio=%E root=%E\n", i, tau[i], a[i], rhorad[i], rhomat[i], (lambda[i] / KAPPA) / 5.36934E-10 , (rhorad[i] + rhomat[i] + lambda[i] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0);
         }
+        printf("Managed %i steps\n" , ifinish);
+        printf("%d: tau=%E a=%E rhorad=%E rhomat=%E rhoratio=%E root=%E\n", ifinish, tau[ifinish], a[ifinish], rhorad[ifinish], rhomat[ifinish], (lambda[ifinish] / KAPPA) / 5.36934E-10 , (rhorad[ifinish] + rhomat[ifinish] + lambda[ifinish] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0);
         this->getLuminosityDistances();
     }
 
     void doStep(int i) {
+        ifinish = i;
         // New scale factor
-        double root = (rhorad[i] + rhomat[i]) * (8.0 * PI * GNEWTON * pow(CLIGHT, -2.0)) / 3.0;
-        //double root = (rhorad[i] + rhomat[i] + lambda[i] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0;
+        //double root = (rhorad[i] + rhomat[i]) * (8.0 * PI * GNEWTON * pow(CLIGHT, -2.0)) / 3.0;
+        double root = (rhorad[i] + rhomat[i] + lambda[i] / KAPPA) * 8.0 * PI * GNEWTON * pow(CLIGHT, -2.0) / 3.0;
         a[i + 1] = a[i] * (1.0 + sqrt(root) * (tau[i + 1] - tau[i]));
 
         // New volume (double checked)
@@ -155,12 +165,12 @@ private:
         this->steps = steps;
 
         // Set free parameter ell
-        double alpha = 0.1;
+        double alpha = 2.5;
         ell = alpha * LPLANCK;
 
         // Set initial values
         //deltatau = (AGEOFUNIVERSE / TPLANCK) / steps;
-        deltatau = 100.0;
+        deltatau = 1.0;
         printf("delta-tau = %E\n", deltatau);
         tau0 = 1;
         //tau0 = TPLANCK;
@@ -169,6 +179,7 @@ private:
         rhomat0 = 2.98428E19; //DIMENSIONFUL!
         rhorad0 = 4.01871E25; //DIMENSIONFUL!
         lambda0 = 0.0;
+        ifinish = 0;
 
         // Allocate memory
         a =      new double[steps];
@@ -192,7 +203,7 @@ private:
         N[0] = V0 / pow(ell, 4.0);
         S[0] = 0.0;
         for (int i = 1; i < steps; i++) {
-            tau[i] = tau0 + pow(1.5,i) * deltatau;
+            tau[i] = tau0 + i * deltatau;
             y[i] = 0.0;
         }
         debug[0] = 0.0;
